@@ -1,0 +1,85 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#   "mflux",
+#   "llm",
+#   "llm-ollama",
+#   "python-slugify",
+# ]
+# ///
+import re
+import os
+import llm
+from mflux.models.flux2 import Flux2Klein
+from slugify import slugify
+
+
+QUERIES = [
+    "I want to go to the gym, but don’t have the time and motivation.",
+    "I would like to have one more kid, but its just too much work.",
+    "I get stressed and eat too much and the wrong things.",
+    "How can I be a better partner.",
+    "How can I earn more money.",
+    "How do we overcome egoism and become carbon neutral?",
+    "What is the meaning of life?",
+]
+
+def remove_think(resp_text):
+    return re.sub(r"<think>.*?</think>\n\n", "", resp_text, flags=re.DOTALL)
+
+
+def generate_image(query):
+
+    #
+    # Ask for advice
+    #
+    # 4b is much better at giving advice, 8B overthinks. But 4b fails at some simple "cognitive" "understanding".
+    # We need "whishy-washy" advice that is grounded on some truth.
+    # Having a formulation in some "Yoda-Like" style leads to slightly "esoteric" images that work better at autosuggestion and finding personal meaning.
+    # The word "positive" is important to mitigate harmfull images and an attempt to push the user into a good direction and avoiding him or her to dwell too much in "his own soup".
+    resp = llm.get_model("qwen3:4b").prompt(
+        f"Answer me with a one-sentence, positive, zen-like advice: {query}" + "\n /nothink"
+    )
+    advice = resp.text().strip('"')
+    advice = remove_think(advice)
+    # print(query)
+    # print(advice)
+    # print()
+    # continue
+    print("==============")
+    print(query)
+    print()
+    print(advice)
+    print("==============")
+
+
+    make_image_prompt_prompt = f'''I need an extensive, detailed and concrete image generation prompt that returns an image with artistic value.
+    I want to abstractly and only subtly comment on the following sentence: "{advice}". Describe the scene in all details, the colorscheme, the composition, the lighting, the atmosphere, location, artistic style, etc. Emit only the prompt.'''
+
+    resp = llm.get_model("qwen3:8b").prompt(make_image_prompt_prompt)
+    make_image_prompt = resp.text()
+    make_image_prompt = remove_think(make_image_prompt)
+    print(make_image_prompt)
+
+
+    image = Flux2Klein(quantize=4).generate_image(
+        prompt=make_image_prompt,
+        seed=42,
+        num_inference_steps=5,
+        width=1024,
+        height=768,
+    )
+    return image
+
+
+for counter, query in enumerate(QUERIES):
+
+    print(f"({counter+1}/{len(QUERIES)}) {query}")
+    image = generate_image(query)
+    filename = "out/" + slugify(query) + ".png"
+    try:
+        os.remove(filename)
+    except FileNotFoundError:
+        pass
+    image.save(filename)
