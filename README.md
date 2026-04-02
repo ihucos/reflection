@@ -6,7 +6,7 @@
 Reflection is an (unfinished) experimental project combining prompt engineering, story telling and art.
 It attempts to make uncomputable questions computable.
 
-You can ask it weakly defined questions like "How do I get more successful at my job" or "What is the meaning of life".
+You can ask it weakly defined questions like "How can I grow" or "What is the meaning of life".
 
 
 ## How it works
