@@ -31,6 +31,10 @@ def remove_think(resp_text):
 
 def generate_image(query):
 
+    print("QUERY:")
+    print(query)
+    print()
+
     #
     # Ask for advice
     #
@@ -38,31 +42,26 @@ def generate_image(query):
     # We need "whishy-washy" advice that is grounded on some truth.
     # Having a formulation in some "Yoda-Like" style leads to slightly "esoteric" images that work better at autosuggestion and finding personal meaning.
     # The word "positive" is important to mitigate harmfull images and an attempt to push the user into a good direction and avoiding him or her to dwell too much in "his own soup".
+    print("ADVICE:")
     resp = llm.get_model("qwen3:4b").prompt(
         f"Answer me with a one-sentence, positive, zen-like advice: {query}" + "\n /nothink"
     )
     advice = resp.text().strip('"')
     advice = remove_think(advice)
-    # print(query)
-    # print(advice)
-    # print()
-    # continue
-    print("==============")
-    print(query)
-    print()
     print(advice)
-    print("==============")
+    print()
 
 
     # This is a "magic prompt" I don't really know why it works well and many alternative promtps failed.
     make_image_prompt_prompt = f'''I need an extensive, detailed and concrete image generation prompt that returns an image with artistic value.
     I want to abstractly and only subtly comment on the following sentence: "{advice}". Describe the scene in all details, the colorscheme, the composition, the lighting, the atmosphere, location, artistic style, etc. Emit only the prompt.'''
 
+    print("IMAGE GENERATION PROMPT:")
     resp = llm.get_model("qwen3:8b").prompt(make_image_prompt_prompt)
     make_image_prompt = resp.text()
     make_image_prompt = remove_think(make_image_prompt)
     print(make_image_prompt)
-
+    print()
 
     image = Flux2Klein(quantize=4).generate_image(
         prompt=make_image_prompt,
@@ -76,7 +75,7 @@ def generate_image(query):
 
 for counter, query in enumerate(QUERIES):
 
-    print(f"({counter+1}/{len(QUERIES)}) {query}")
+    print(f"({counter+1}/{len(QUERIES)})")
     image = generate_image(query)
     filename = "out/" + slugify(query) + ".png"
     try:
