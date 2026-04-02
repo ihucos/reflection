@@ -6,7 +6,7 @@
 Reflection is an (unfinished) experimental project combining prompt engineering, story telling and art.
 It attempts to make uncomputable questions computable.
 
-You can ask it weakly defined questions like "How can I grow" or "What is the meaning of life".
+You can ask it weakly defined questions like "How can I be a better person" or "What is the meaning of life".
 
 
 ## How it works
@@ -23,8 +23,8 @@ Those are hand-choosen answer-images from evaluation queries. The evaluation ima
 ### I want to go to the gym, but don’t have the time and motivation. 
 <img width="1024" height="768" alt="how-can-i-earn-more-money" src="./demo_run_images/i-want-to-go-to-the-gym-but-dont-have-the-time-and-motivation.png" />
 
-### How can I be a better partner?
-<img width="1024" height="768" alt="how-can-i-earn-more-money" src="./demo_run_images/how-can-i-be-a-better-partner.png" />
-
 ### How can I earn more money?
 <img width="1024" height="768" alt="how-can-i-earn-more-money" src="./demo_run_images/how-can-i-earn-more-money.png" />
+
+### How can I be a better partner?
+<img width="1024" height="768" alt="how-can-i-earn-more-money" src="./demo_run_images/how-can-i-be-a-better-partner.png" />
